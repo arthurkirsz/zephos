@@ -8,6 +8,7 @@ class Particle {
     this.x = x;
     this.y = y;
     this.color = '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
+    this.life = getRandomInt(50, 300);
     this.context = context;
     
     ZEPHOS.push(this);
@@ -30,6 +31,11 @@ class Particle {
       
       p.context.fillStyle = p.color;
       p.context.fillRect(p.x,p.y, 2, 2);
+
+      if(p.life-- < 0) {
+        all.splice(i,1);
+      }
+
       i++;
     }
   }

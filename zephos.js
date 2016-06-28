@@ -7,8 +7,11 @@ class Particle {
   constructor(x, y, context) {
     this.x = x;
     this.y = y;
-    this.color = '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
-    this.life = getRandomInt(50, 300);
+
+    this.alpha = 1;
+    this.color = "rgba(" + 255 + ", " + getRandomInt(0, 255) + ", " + getRandomInt(0, 255) + ", " + this.alpha + ")";
+
+    this.life = getRandomInt(50, 150);
     this.context = context;
     
     ZEPHOS.push(this);
@@ -29,10 +32,14 @@ class Particle {
       p.x += getRandomInt(-1, 2);
       p.y += getRandomInt(-1, 2);
       
+      p.color = "rgba(" + 255 + ", " + 255 + ", " + getRandomInt(200, 255) + ", " + p.alpha + ")";
       p.context.fillStyle = p.color;
       p.context.fillRect(p.x,p.y, 2, 2);
 
       if(p.life-- < 0) {
+        p.alpha -= 0.05;
+      }
+      if(p.alpha <= 0) {
         all.splice(i,1);
       }
 

@@ -1,6 +1,8 @@
 # Zephos
 Zephos is a particle engine. Generate particles and tweak their properties (Gravity, Friction, Velocity, Color, Alpha etc...).
 
+See a mini demo at http://codepen.io/arthurkirsz/pen/MepxMd
+
 # How to
 comming soon
 

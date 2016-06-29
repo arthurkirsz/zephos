@@ -17,13 +17,96 @@
   }
 
   canvas {
+
+
+
     display: block;
-    margin: 80px auto 20px;
+    /*margin: 80px auto 20px;
     border: 1px solid #333;
-    box-shadow: 0 0 16px 2px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 16px 2px rgba(0, 0, 0, 0.8);*/
+
+
+
+    position:fixed;
+    top:0px;
+    left:0px;
   }
 </style>
 
-<h1>.:.:. Zephos Particle Engine .:.:.</h1>
+<!-- <h1>.:.:. Zephos Particle Engine .:.:.</h1> -->
 <canvas id="canvas"></canvas>
-<script type="text/javascript" src="zephos.js"></script>
+<script type="text/javascript" src="lib/zephos.js"></script>
+<script type="text/javascript">
+  window.requestAnimFrame =
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      return window.setTimeout(callback, 1000 / 60);
+    };
+
+  var canvas = document.getElementById('canvas'),
+      ctx = canvas.getContext('2d');
+
+  // canvas.width = 300;
+  // canvas.height = 200;  
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+
+  var Loop = function() {    
+    ctx.fillStyle = '#1f2127';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+
+    ctx.shadowColor = '#88FF88';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+
+
+    Zephos.update();
+    window.requestAnimFrame(Loop);
+  };
+
+  Loop();
+
+  //var spawner = setInterval(function(){ respawn() }, 2000);
+  window.onkeydown = function () { 
+    Zephos.particles = [];
+    respawn();
+  };
+
+  window.addEventListener("touchend", function () { 
+    Zephos.particles = [];
+    respawn();
+  });
+
+  function respawn() {
+      // if( !Zephos.particles.length ) {
+        // for(i in Zephos.generateParticles(100, canvas.width/2, canvas.height/2, ctx) ) {
+        //   var p = Zephos.particles[i];
+        //   p.gy = -0.03;
+        //   p.frictY = 1.0001;
+        //   p.life = 120;
+        //   p.dy = Math.abs(p.dy);
+        // }
+
+        for(j in Zephos.generateParticles(50, canvas.width/2, canvas.height/2, ctx) ) {
+          var p = Zephos.particles[j];
+
+          p.gy = -0.03 - Std.randFloat(0.02);
+          p.frictY = 1.0001;
+          p.life = Std.randInt(100);
+          p.dy = Math.abs(p.dy);
+          p.circle = !!(Math.random() < 0.4 )
+        }
+            
+      // }
+  }
+  //@respawn();
+</script>

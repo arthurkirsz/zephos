@@ -109,10 +109,14 @@
   Zephos.particles = [];
   Zephos.generateParticles = function (n, x, y, size, ctx) {
     for(var i = 0; i<n; i++) {
-      var p = new Particle(x + Utils.randFloat(7) * Utils.sign(), y + Utils.randFloat(7) * Utils.sign(), size, ctx);
+      var p = new Particle(x + Utils.randFloat(7) * Utils.sign(), y + Utils.randFloat(7) * Utils.sign(), size, Zephos.context);
       this.particles.push(p);
     }
     return this.particles;
+  };
+
+  Zephos.initialize = function (ctx) {
+    Zephos.context = Zephos.c = ctx;
   };
 
   Zephos.update = function () {

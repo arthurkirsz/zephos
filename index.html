@@ -41,11 +41,10 @@
   var canvas = document.getElementById('canvas'),
       ctx = canvas.getContext('2d');
 
-  // canvas.width = 300;
-  // canvas.height = 200;  
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
+  Zephos.initialize(ctx);
 
   var Loop = function() {    
     ctx.fillStyle = '#1f2127';
@@ -72,9 +71,10 @@
   };
 
   function respawn() {
-    for(j in Zephos.generateParticles(20, canvas.width/2, canvas.height/2, 3, ctx) ) {
+    for(j in Zephos.generateParticles(20, canvas.width/2, canvas.height/2, 2, ctx) ) {
       var p = Zephos.particles[j];
 
+      p.size = Zephos.Utils.randInt(3);
       p.gy = -0.03 - Zephos.Utils.randFloat(0.02);
       p.frictY = 1.0002;
       p.life = 80 - Zephos.Utils.randInt(20);

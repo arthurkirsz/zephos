@@ -24,7 +24,8 @@
   }
 </style>
 
-<!-- <h1>.:.:. Zephos Particle Engine .:.:.</h1> -->
+<div style="position: fixed;bottom:15px;right:15px;z-index:1;color:#fff">Zephos, the windy particle engine</div>
+
 <canvas id="canvas"></canvas>
 <script type="text/javascript" src="./zephos.js"></script>
 <script type="text/javascript">
@@ -52,34 +53,88 @@
 
 
 
-    ctx.shadowColor = '#88FF88';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
+    // ctx.shadowColor = '#88FF88';
+    // ctx.shadowBlur = 10;
+    // ctx.shadowOffsetX = 0;
+    // ctx.shadowOffsetY = 0;
+    ctx.fillStyle = 'brown';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#1f2127';
+    ctx.beginPath();
+    var bottom = canvas.height;
+    ctx.moveTo(0, bottom);
+    ctx.lineTo(50, bottom - 50);
+    ctx.lineTo(100, bottom);
+
+    ctx.moveTo(50, bottom);
+    ctx.lineTo(150, bottom - 100);
+    ctx.lineTo(200, bottom);
+
+    ctx.moveTo(100, bottom);
+    ctx.lineTo(200, bottom - 120);
+    ctx.lineTo(300, bottom);
+    
+    ctx.moveTo(250, bottom);
+    ctx.lineTo(320, bottom - 80);
+    ctx.lineTo(400, bottom);
+    
+    ctx.moveTo(400, bottom);
+    ctx.lineTo(520, bottom - 220);
+    ctx.lineTo(650, bottom);
+    
+    ctx.moveTo(600, bottom);
+    ctx.lineTo(canvas.width, bottom / 3);
+    ctx.lineTo(canvas.width, bottom);
+    
+    
+    ctx.fill();
 
 
 
     Zephos.update();
+    for (var i = Zephos.particles.length - 1; i >= 0; i--) {
+      var p = Zephos.particles[i];
+      if(p.y > canvas.height) {
+        Zephos.particles.splice(i,1);
+
+        var newp = new Zephos.Particle(0, 0, 0, Zephos.context);
+        newp.x = Zephos.Utils.randInt(canvas.width);
+        newp.y = 0;
+
+
+
+        newp.size = 1.5 + Zephos.Utils.randInt(2);
+        newp.gy = 0.011;
+        newp.frictY = 1.0000001;
+        newp.life = 1000;
+        newp.dy = Math.abs(newp.dy);
+        newp.circle = true;
+
+
+        Zephos.particles.push(newp);
+      }
+
+
+    }
+
     window.requestAnimFrame(Loop);
   };
 
   Loop();
-
-  window.onkeydown = function () { 
-    Zephos.particles = [];
-    respawn();
-  };
-
-  function respawn() {
-    for(j in Zephos.generateParticles(20, canvas.width/2, canvas.height/2, 2, ctx) ) {
+  (function () {
+    for(j in Zephos.generateParticles(100, canvas.width/2, canvas.height/2, 2, ctx) ) {
       var p = Zephos.particles[j];
+      p.x = Zephos.Utils.randInt(canvas.width);
+      p.y = Zephos.Utils.randInt(canvas.height);
 
-      p.size = Zephos.Utils.randInt(3);
-      p.gy = -0.03 - Zephos.Utils.randFloat(0.02);
-      p.frictY = 1.0002;
-      p.life = 80 - Zephos.Utils.randInt(20);
+      p.size = 1.5 + Zephos.Utils.randInt(2);
+      p.gy = 0.011;
+      p.frictY = 1.0000001;
+      p.life = 1000;
       p.dy = Math.abs(p.dy);
-      p.circle = !!(Math.random() < 0.4 );
+      p.circle = true;
     }
-  }
+  })();
+
 </script>

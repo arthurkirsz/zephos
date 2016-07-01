@@ -1,0 +1,56 @@
+<style type="text/css">
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  canvas {
+    display: block;
+    position:fixed;
+    top:0px;
+    left:0px;
+  }
+</style>
+
+
+<canvas id="canvas"></canvas>
+<script type="text/javascript" src="zephos.js"></script>
+
+<script type="text/javascript">
+  window.requestAnimFrame =
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      return window.setTimeout(callback, 1000 / 60);
+    };
+
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  Zephos.initialize(ctx);
+  
+
+  var Main = function() {    
+    ctx.fillStyle = '#313140';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    Zephos.update();
+    window.requestAnimFrame(Main);
+  };
+
+
+  (function () {
+
+    for(j in Zephos.spawn(40, canvas.width/2, canvas.height/2, 1, 100) ) {
+      var p = Zephos.particles[j];
+      p.setEffect("dust");
+    }
+    
+  })();
+
+  Main();
+</script>

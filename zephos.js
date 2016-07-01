@@ -50,9 +50,12 @@
 
 
 
-  var Particle = Zephos.Particle = function (x, y, context) {
+  var Particle = Zephos.Particle = function (x, y, size, context) {
     this.x = x;
     this.y = y;
+
+    this.size = size;
+
 
     this.dx = Utils.randFloat(0.8) * Utils.sign();
     this.dy = - Utils.randFloat(0.8);
@@ -77,34 +80,25 @@
     return this;
   };
 
-  Particle.prototype.draw = function (w, h, c, a, options) {
+  Particle.prototype.draw = function (options) {
 
-    // TODO : make this a draw function
-    //this.color = "rgba(" + 255 + ", " + Utils.randInt(100, 255) + ", " + Utils.randInt(200, 255) + ", " + this.alpha + ")";
-    //this.context.fillStyle = this.color;
-    //this.context.fillRect(this.x, this.y, Utils.randInt(3), Utils.randInt(5)); // Missing width, height, color, alpha
+    this.size = (options.decrease) ? (this.life > 0 ? (this.size * this.life / 100) : 0) : this.size;
 
-
-    if(options.decrease) {
-      var size = this.life > 0 ? (10 * this.life / 100) : 0;  
-    }
-    else {
-      size = 2;
-    }
-    
-
+    // Do not draw hidden particles (flashing problems)
     if(this.alpha) {
+      // TODO : make color hex to rgba dynamic
       this.color = '#69a34f';
       this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
+
 
       this.context.beginPath();
       this.context.fillStyle = this.color;
 
       if(this.circle) {
-        this.context.arc(this.x, this.y, size, 0, 2 * Math.PI);  
+        this.context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);  
       }
       else {
-        this.context.rect(this.x, this.y, size, size);   
+        this.context.rect(this.x, this.y, this.size, this.size);   
       }
       
       this.context.fill();
@@ -113,9 +107,9 @@
 
 
   Zephos.particles = [];
-  Zephos.generateParticles = function (n, x, y, ctx) {
+  Zephos.generateParticles = function (n, x, y, size, ctx) {
     for(var i = 0; i<n; i++) {
-      var p = new Particle(x + Utils.randFloat(7) * Utils.sign(), y + Utils.randFloat(7) * Utils.sign(), ctx);
+      var p = new Particle(x + Utils.randFloat(7) * Utils.sign(), y + Utils.randFloat(7) * Utils.sign(), size, ctx);
       this.particles.push(p);
     }
     return this.particles;
@@ -137,7 +131,7 @@
       // TODO : implement wind correctly wind
       // p.dx += p.gx - 0.06; // with wind
 
-      
+
       p.dx += p.gx; // gravity 
       p.dy += p.gy;
 
@@ -146,7 +140,7 @@
       p.dy *= p.frictY;
       
 
-      p.draw(null, null, null, null, {decrease: false});
+      p.draw({decrease: false});
 
       if(p.life-- < 0) {
         p.alpha -= 0.05;

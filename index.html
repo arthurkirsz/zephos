@@ -72,7 +72,7 @@
   };
 
   function respawn() {
-    for(j in Zephos.generateParticles(20, canvas.width/2, canvas.height/2, ctx) ) {
+    for(j in Zephos.generateParticles(20, canvas.width/2, canvas.height/2, 3, ctx) ) {
       var p = Zephos.particles[j];
 
       p.gy = -0.03 - Zephos.Utils.randFloat(0.02);

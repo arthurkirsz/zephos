@@ -123,30 +123,34 @@
     Zephos.update();
     for (var i = Zephos.particles.length - 1; i >= 0; i--) {
       var p = Zephos.particles[i];
-      if(p.y > canvas.height || p.y < -20 || p.x < -10 || p.x > canvas.width + 10) {
+      if(p.y > canvas.height +20 || p.y < -20 || p.x < -10 || p.x > canvas.width + 10) {
         Zephos.particles.splice(i,1);
 
         var newp = new Zephos.Particle(0, 0, 0, Zephos.context);
 
+
         if(Math.random()>.35) {
           newp.x = Zephos.Utils.randInt(canvas.width);
           newp.y = 0;  
+          newp.gx = - 0.06;
         }
         else {
           newp.x = canvas.width;
-          newp.y = Zephos.Utils.randInt(canvas.height);
+          newp.y = Zephos.Utils.randInt(canvas.height/1.5);
+          newp.gx = -.2;
         }
         
 
 
-
         newp.size = 1.5 + Zephos.Utils.randInt(2);
-        newp.gx = - 0.06;
-        newp.gy = 0.011;
+        newp.gy = 0.002;
         newp.frictY = 1.0000001;
         newp.life = 1000;
         newp.dy = Math.abs(newp.dy);
         newp.circle = true;
+
+
+
 
 
         Zephos.particles.push(newp);
@@ -167,7 +171,7 @@
 
       p.size = 1.5 + Zephos.Utils.randInt(2);
       p.gx = - 0.08;
-      p.gy = (Math.random()>.1) ? 0.001 : -0.002;
+      p.gy = 0.001;
       p.frictY = 1.0000001;
       p.life = 1000;
       p.dy = Math.abs(p.dy);

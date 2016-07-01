@@ -88,7 +88,7 @@
     if(this.alpha) {
       // TODO : make color hex to rgba dynamic
       this.color = '#69a34f';
-      this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
+      this.color = "rgba(255, 255, 255, "+ this.alpha + ")";
 
 
       this.context.beginPath();

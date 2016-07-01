@@ -1,8 +1,25 @@
 <style type="text/css">
+  @font-face {
+    font-family: "Triforce";
+    src: url('fonts/Triforce.ttf');
+  }
+  @font-face {
+    font-family: "Hylian Symbols";
+    src: url('fonts/HylianSymbols.ttf');
+  }
+  @font-face {
+    font-family: "Ancient Hylian";
+    src: url('fonts/AncientHylian.otf');
+  }
+  @font-face {
+    font-family: "Sherwood";
+    src: url('fonts/sherwood.ttf');
+  }
+
   * {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: "Triforce", sans-serif;
     font-weight: 100;
   }
 
@@ -24,7 +41,14 @@
   }
 </style>
 
-<div style="position: fixed;bottom:15px;right:15px;z-index:1;color:#fff">Zephos, the windy particle engine</div>
+<div style="position: fixed;background: rgba(0,0,0,.35);padding: 20px; width: 300px; height: 140px; top: 50%; left: calc(50% - 150px);transform: translateY(-50%); z-index:1;color:#fff; text-align: center;">
+
+  <span style="font-size: 60px;">Zephos</span>
+  <br>
+  <br>
+  <span style="text-transform: uppercase;font-size: 14px;font-family:'Sherwood'">the windy particle engine</span>
+  <span style="font-size: 50px;font-family:'Hylian Symbols'; position: absolute;bottom: 15px;left: 160px;">l</span>
+</div>
 
 <canvas id="canvas"></canvas>
 <script type="text/javascript" src="./zephos.js"></script>
@@ -48,16 +72,8 @@
   Zephos.initialize(ctx);
 
   var Loop = function() {    
-    ctx.fillStyle = '#1f2127';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-
-
-    // ctx.shadowColor = '#88FF88';
-    // ctx.shadowBlur = 10;
-    // ctx.shadowOffsetX = 0;
-    // ctx.shadowOffsetY = 0;
-    ctx.fillStyle = 'brown';
+    ctx.fillStyle = '#31AAEC';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = '#1f2127';
@@ -84,8 +100,20 @@
     ctx.lineTo(650, bottom);
     
     ctx.moveTo(600, bottom);
-    ctx.lineTo(canvas.width, bottom / 3);
-    ctx.lineTo(canvas.width, bottom);
+    ctx.lineTo(700, bottom / 1.8);
+    ctx.lineTo(800, bottom);
+    
+    ctx.moveTo(750, bottom);
+    ctx.lineTo(850, bottom - 100);
+    ctx.lineTo(920, bottom);
+    
+    ctx.moveTo(900, bottom);
+    ctx.lineTo(1000, bottom - 140);
+    ctx.lineTo(1100, bottom);
+    
+    ctx.moveTo(910, bottom);
+    ctx.lineTo(1100, bottom - 140);
+    ctx.lineTo(1280, bottom);
     
     
     ctx.fill();
@@ -95,16 +123,25 @@
     Zephos.update();
     for (var i = Zephos.particles.length - 1; i >= 0; i--) {
       var p = Zephos.particles[i];
-      if(p.y > canvas.height) {
+      if(p.y > canvas.height || p.y < -20 || p.x < -10 || p.x > canvas.width + 10) {
         Zephos.particles.splice(i,1);
 
         var newp = new Zephos.Particle(0, 0, 0, Zephos.context);
-        newp.x = Zephos.Utils.randInt(canvas.width);
-        newp.y = 0;
+
+        if(Math.random()>.35) {
+          newp.x = Zephos.Utils.randInt(canvas.width);
+          newp.y = 0;  
+        }
+        else {
+          newp.x = canvas.width;
+          newp.y = Zephos.Utils.randInt(canvas.height);
+        }
+        
 
 
 
         newp.size = 1.5 + Zephos.Utils.randInt(2);
+        newp.gx = - 0.06;
         newp.gy = 0.011;
         newp.frictY = 1.0000001;
         newp.life = 1000;
@@ -129,7 +166,8 @@
       p.y = Zephos.Utils.randInt(canvas.height);
 
       p.size = 1.5 + Zephos.Utils.randInt(2);
-      p.gy = 0.011;
+      p.gx = - 0.08;
+      p.gy = (Math.random()>.1) ? 0.001 : -0.002;
       p.frictY = 1.0000001;
       p.life = 1000;
       p.dy = Math.abs(p.dy);

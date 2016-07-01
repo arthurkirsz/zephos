@@ -1,88 +1,164 @@
-// Contains all particles.
-const ZEPHOS = [];
+// Standard Object provides ways to manipulate basic types
+Std = {
+  sign: function () {
+    return Math.random() < .5 ? 1 : -1;
+  },
 
+  randFloat: function (f) {
+    return Math.floor(Math.random() * f * 10000) / 10000;
+  },
 
-class Particle {
-
-  constructor(x, y, context) {
-    this.x = x;
-    this.y = y;
-
-    this.alpha = 1;
-    this.color = "rgba(" + 255 + ", " + getRandomInt(0, 255) + ", " + getRandomInt(0, 255) + ", " + this.alpha + ")";
-
-    this.life = getRandomInt(50, 150);
-    this.context = context;
-    
-    ZEPHOS.push(this);
+  randInt: function (n) {
+    return Math.floor(Math.random() * n);
   }
-  
-  static generateParticles(n, x, y, ctx){
-    for(var i = 0; i<n; i++) {
-      new Particle(x, y, ctx);
-    }
-  }
-  
-  static update(){
-    var i = 0;
-    var all = ZEPHOS;
-    
-    while(i<all.length) {
-			var p = ZEPHOS[i];
-      p.x += getRandomInt(-1, 2);
-      p.y += getRandomInt(-1, 2);
-      
-      p.color = "rgba(" + 255 + ", " + 255 + ", " + getRandomInt(200, 255) + ", " + p.alpha + ")";
-      p.context.fillStyle = p.color;
-      p.context.fillRect(p.x,p.y, 2, 2);
-
-      if(p.life-- < 0) {
-        p.alpha -= 0.05;
-      }
-      if(p.alpha <= 0) {
-        all.splice(i,1);
-      }
-
-      i++;
-    }
-  }
-}
-
-
-// Easy random
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-
-window.requestAnimFrame =
-  window.requestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  window.mozRequestAnimationFrame ||
-  window.oRequestAnimationFrame ||
-  window.msRequestAnimationFrame ||
-  function(callback) {
-    return window.setTimeout(callback, 1000 / 60);
-  };
-
-var canvas = document.getElementById('canvas'),
-    ctx = canvas.getContext('2d');
-
-canvas.width = 300;
-canvas.height = 200;
-
-Particle.generateParticles(200,canvas.width/2, canvas.height/2, ctx );
-
-
-var Loop = function() {
-  
-  ctx.fillStyle = '#333';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  
-  Particle.update();
-  
-  window.requestAnimFrame(Loop);
 };
 
-Loop();
+
+
+Particle = function (x, y, context) {
+  this.x = x;
+  this.y = y;
+
+  this.dx = Std.randFloat(0.8) * Std.sign();
+  this.dy = - Std.randFloat(0.8);
+
+
+  this.gx = Std.randFloat(0.02) * Std.sign();
+  this.gy = Std.randFloat(0.02) * Std.sign();
+
+
+  this.frictX = 0.95+Std.randInt(0,40)/1000;
+  this.frictY = 0.97;
+
+
+
+  this.alpha = 1;
+  this.color = "#FFF";
+  this.circle = false;
+
+  this.life = Std.randInt(50, 150);
+  this.context = context;
+  
+  return this;
+};
+
+Particle.prototype.draw = function (w, h, c, a, options) {
+
+  // TODO : make this a draw function
+  //this.color = "rgba(" + 255 + ", " + Std.randInt(100, 255) + ", " + Std.randInt(200, 255) + ", " + this.alpha + ")";
+  //this.context.fillStyle = this.color;
+  //this.context.fillRect(this.x, this.y, Std.randInt(3), Std.randInt(5)); // Missing width, height, color, alpha
+
+
+  if(options.decrease) {
+    var size = this.life > 0 ? (10 * this.life / 100) : 0;  
+  }
+  else {
+    size = 2;
+  }
+  
+
+  this.color = '#69a34f';
+  this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
+
+  this.context.beginPath();
+  this.context.fillStyle = this.color;
+
+  if(this.circle) {
+    this.context.arc(this.x, this.y, size, 0, 2 * Math.PI);  
+  }
+  else {
+    this.context.rect(this.x, this.y, size, size);   
+  }
+  
+  this.context.fill();
+};
+
+
+
+
+
+
+//     Backbone.js 1.3.3
+
+//     (c) 2010-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     Backbone may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://backbonejs.org
+
+(function(factory) {
+
+  // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
+  // We use `self` instead of `window` for `WebWorker` support.
+  var root = (typeof self == 'object' && self.self === self && self) ||
+            (typeof global == 'object' && global.global === global && global);
+
+  // Set up Backbone appropriately for the environment. Start with AMD.
+  if (typeof define === 'function' && define.amd) {
+    define(['exports'], function(exports) {
+      // Export global even in AMD case in case this script is loaded with
+      // others that may still expect a global Backbone.
+      root.Zephos = factory(root, exports);
+    });
+
+  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
+  } else if (typeof exports !== 'undefined') {
+    factory(root, exports);
+
+  // Finally, as a browser global.
+  } else {
+    root.Zephos = factory(root, {});
+  }
+
+})(function(root) {
+
+  var Zephos = {
+    particles: [],
+
+    generateParticles: function (n, x, y, ctx){
+      for(var i = 0; i<n; i++) {
+        var p = new Particle(x + Std.randFloat(7) * Std.sign(), y + Std.randFloat(7) * Std.sign(), ctx);
+        this.particles.push(p);
+      }
+      return this.particles;
+    },
+
+    update: function (){
+      var i = 0;
+      var all = this.particles;
+      
+      while(i<all.length) {
+
+        // Get the particle from the list
+        var p = all[i];
+
+        p.x += p.dx; // movement
+        p.y += p.dy;
+
+        // p.dx += p.gx - 0.06; // with wind
+        p.dx += p.gx; // gravity TODO : implement wind correctly wind
+        p.dy += p.gy;
+
+
+        p.dx *= p.frictX; // friction
+        p.dy *= p.frictY;
+        
+
+        p.draw(null, null, null, null, {decrease: false});
+
+        if(p.life-- < 0) {
+          p.alpha -= 0.05;
+        }
+        if(p.alpha <= 0) {
+          all.splice(i,1);
+        }
+
+        i++;
+      }
+    }
+  };
+
+  return Zephos;
+});
+
+// window.Zephos = new Zephos();

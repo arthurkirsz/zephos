@@ -47,10 +47,39 @@
     return Math.floor(Math.random() * n);
   };
 
+  Utils.hexToRgb = function(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+  };
 
 
 
-  var Particle = Zephos.Particle = function (x, y, size, context) {
+  /*
+   * Particle Class
+   *
+   * context: 2DRendringContext
+   * options: Object containing specific 
+   *   x : The position on X axis of the particle when it spawns
+   *   y : The position on Y axis of the particle when it spawns
+   *   size : The size of the particle (or the radius if circle)
+   *   life : The life length of the Particle
+   *   frictY : Friction on Y axis
+   *   gx : Gravity on X axis
+   *   gy : Gravity on Y axis
+   *
+   *
+   */
+  var Particle = Zephos.Particle = function (x, y, size,  context) {
     this.x = x;
     this.y = y;
 
@@ -74,11 +103,47 @@
     this.color = "#FFF";
     this.circle = false;
 
-    this.life = Utils.randInt(50, 150);
+    this.life = Utils.randInt(40);
     this.context = context;
     
     return this;
+
+    // TODO : make documentation for mendatory properties for a Particle instance
+    // for(var property in options) {
+    //     if(options.hasOwnProperty(property)) {
+    //         this[property] = options[property];
+    //     }
+    // }
+    
+    return this;
   };
+
+  Particle.prototype.setEffect = function (effect) {
+    switch(effect) {
+      case 'dust': 
+        this.dx = Utils.randFloat(0.8) * Utils.sign();
+        this.dy = - Utils.randFloat(0.8);
+
+        this.gx = Utils.randFloat(0.02) * Utils.sign();
+        this.gy = Utils.randFloat(0.02) * Utils.sign();
+
+        this.frictX = 0.95+Utils.randInt(0,40)/1000;
+        this.frictY = 0.97;
+
+        this.alpha = 1;
+      break;
+      case 'snow': 
+        this.size = 1.5 + Utils.randInt(2);
+        this.gx = - 0.08;
+        this.gy = 0.001;
+        this.frictY = 1.0000001;
+        this.life = 1000;
+        this.dy = Math.abs(this.dy);
+        this.circle = true;
+      break;
+    }
+  };
+
 
   Particle.prototype.draw = function (options) {
 
@@ -87,11 +152,17 @@
     // Do not draw hidden particles (flashing problems)
     if(this.alpha) {
       // TODO : make color hex to rgba dynamic
-      this.color = '#69a34f';
-      this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
-      this.color = '#731c1c';
+      // this.color = '#69a34f';
+      // this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
+      this.color = '#FFF';
+      //var color = Utils.hexToRgb(this.color);
 
+
+
+      //this.color = (color != null) ? "rgba(" + color.r + ", " + color.g + ", " + color.b + ", "+ this.alpha + ")" : this.color;
       this.context.beginPath();
+
+      // TODO : handle arrays of colors with dynamic choosing :)
       this.context.fillStyle = this.color;
 
       if(this.circle) {
@@ -107,10 +178,13 @@
 
 
   Zephos.particles = [];
-  Zephos.generateParticles = function (n, x, y, size, ctx) {
-    for(var i = 0; i<n; i++) {
+  Zephos.spawn = function (number, x, y, size, life) {
+    for(var i = 0; i < number; i++) {
       var p = new Particle(x + Utils.randFloat(7) * Utils.sign(), y + Utils.randFloat(7) * Utils.sign(), size, Zephos.context);
+
+      //var p = new Particle(Zephos.context, options);
       this.particles.push(p);
+
     }
     return this.particles;
   };
@@ -159,5 +233,3 @@
 
   return Zephos;
 });
-
-// window.Zephos = new Zephos();

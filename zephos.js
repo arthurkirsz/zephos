@@ -89,7 +89,7 @@
       // TODO : make color hex to rgba dynamic
       this.color = '#69a34f';
       this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
-
+      this.color = '#731c1c';
 
       this.context.beginPath();
       this.context.fillStyle = this.color;

@@ -79,7 +79,7 @@
   <div class="zephos-footer">Drag your mouse or finger to spawn particles</div>
   <canvas id="canvas"></canvas>
 
-<script type="text/javascript" src="zephos.js?101"></script>
+<script type="text/javascript" src="zephos.js?102"></script>
 
 <script type="text/javascript">
   window.requestAnimFrame =
@@ -129,12 +129,12 @@
       respawn(e.clientX, e.clientY);
   });
   window.addEventListener('touchmove', function(event) {
-    respawn(event.touches[0].clientX, event.touches[0].clientY);
+    respawn(event.touches[0].clientX -20, event.touches[0].clientY +20);
   });
 
 
   function respawn(x, y) {
-    if (Zephos.particles.length < 501) {
+    if (Zephos.particles.length < 1501) {
       Zephos.spawn(5, x, y)
     }
   }

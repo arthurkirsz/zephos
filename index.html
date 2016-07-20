@@ -1,4 +1,9 @@
+<meta name="viewport" content="width=device-width, user-scalable=no">
 <style type="text/css">
+  html {
+    background: #1f2127;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -14,7 +19,7 @@
 
 
 <canvas id="canvas"></canvas>
-<script type="text/javascript" src="zephos.js"></script>
+<script type="text/javascript" src="zephos.js?103"></script>
 
 <script type="text/javascript">
   window.requestAnimFrame =
@@ -29,28 +34,51 @@
 
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
+
+
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
   Zephos.initialize(ctx);
   
+    ctx.shadowColor = '#88FF88';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
 
-  var Main = function() {    
-    ctx.fillStyle = '#313140';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    Zephos.update();
-    window.requestAnimFrame(Main);
+  var Loop = function() {    
+    /*ctx.fillStyle = '#1f2127';*/
+    /*ctx.fillRect(0, 0, canvas.width, canvas.height);*/
+
+    Zephos.particlesDraw();    
+    window.requestAnimFrame(Loop);
   };
 
+  window.isDown = false;
+  window.addEventListener('mousedown', function(e) {
+    window.isDown = true;
+    Zephos.particles = [];
+    respawn(e.clientX, e.clientY);
+  });
 
-  (function () {
+  window.addEventListener('mouseup', function(e) {
+    window.isDown = false;
+  });
 
-    for(j in Zephos.spawn(40, canvas.width/2, canvas.height/2, 1, 100) ) {
-      var p = Zephos.particles[j];
-      p.setEffect("dust");
+  window.addEventListener('mousemove', function(e) {
+    if (window.isDown)
+      respawn(e.clientX, e.clientY);
+  });
+  window.addEventListener('touchmove', function(event) {
+    respawn(event.touches[0].clientX, event.touches[0].clientY);
+  });
+
+
+  function respawn(x, y) {
+    if (Zephos.particles.length < 501) {
+      Zephos.spawn(5, x, y)
     }
-    
-  })();
+  }
 
-  Main();
+  Loop();
 </script>

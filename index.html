@@ -27,6 +27,8 @@
 
   html, body {
     background: #1f2127;
+    display:flex;
+    width:100%;
   }
 
   canvas {
@@ -35,20 +37,30 @@
     top:0px;
     left:0px;
   }
+
+  .zephos-logo-wrapper {
+    background: rgba(0,0,0,.35);
+    padding: 20px; 
+    width: 300px; 
+    height: 140px; 
+    z-index:1;
+    color:#fff; 
+    text-align: center; 
+    margin:auto;
+    position:relative;
+  }
 </style>
 
 
-<div style="position: fixed;background: rgba(0,0,0,.35);padding: 20px; width: 300px; height: 140px; top: 50%; left: calc(50% - 150px);transform: translateY(-50%); z-index:1;color:#fff; text-align: center;">
+  <div class="zephos-logo-wrapper" style="">
+    <span style="font-size: 60px;">Zephos</span>
+    <br><br>
+    <span style="text-transform: uppercase;font-size: 14px;font-family:'Sherwood'">the windy particle engine</span>
+    <span style="font-size: 50px;font-family:'Hylian Symbols'; position: absolute;bottom: 15px;left: 160px;">l</span>
+  </div>
+  <canvas id="canvas"></canvas>
 
-  <span style="font-size: 60px;">Zephos</span>
-  <br>
-  <br>
-  <span style="text-transform: uppercase;font-size: 14px;font-family:'Sherwood'">the windy particle engine</span>
-  <span style="font-size: 50px;font-family:'Hylian Symbols'; position: absolute;bottom: 15px;left: 160px;">l</span>
-</div>
-
-<canvas id="canvas"></canvas>
-<script type="text/javascript" src="zephos.js?103"></script>
+<script type="text/javascript" src="zephos.js?100"></script>
 
 <script type="text/javascript">
   window.requestAnimFrame =

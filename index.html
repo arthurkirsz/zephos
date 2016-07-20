@@ -60,7 +60,7 @@
   </div>
   <canvas id="canvas"></canvas>
 
-<script type="text/javascript" src="zephos.js?100"></script>
+<script type="text/javascript" src="zephos.js?101"></script>
 
 <script type="text/javascript">
   window.requestAnimFrame =
@@ -75,10 +75,6 @@
 
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
-  ctx.shadowColor = '#88FF88';
-  ctx.shadowBlur = 10;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
 
 
   canvas.width = window.innerWidth;
@@ -88,6 +84,12 @@
   
 
   var Loop = function() {
+
+    ctx.shadowColor = '#88FF88';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
     Zephos.particlesDraw();    
     window.requestAnimFrame(Loop);
   };

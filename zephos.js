@@ -90,25 +90,25 @@
     this.x = x;
     this.y = y;
 
-    this.size = size || Zephos.Utils.randRange(2, 15);
-    this.dx = Utils.randFloat(0.8) * Utils.sign();
-    this.dy = - Utils.randFloat(0.8);
+    this.size = size || Zephos.Utils.randRange(1, 5);
+
+    var sign = Utils.sign();
+    this.dx = Utils.randFloat(0.8) * sign;
+    this.dy = Utils.randFloat(0.8);
 
 
-    this.gx = Utils.randFloat(0.02) * Utils.sign();
-    this.gy = Utils.randFloat(0.02) * Utils.sign();
+    this.gx = Utils.randFloat(0.02) * sign;
+    this.gy = Utils.randFloat(0.02) * sign;
 
 
     this.frictX = 0.95+Utils.randInt(0,40)/1000;
     this.frictY = 0.97;
 
-
-
     this.alpha = 1;
-    this.color = "#69a34f";
+    this.color = "#fffa70";
     this.circle = true;
 
-    this.life = Utils.randInt(40);
+    this.life = 40;
     this.context = context;
     
     return this;
@@ -155,7 +155,7 @@
     var size = (options.decrease) ? (this.life > 0 ? 40 * this.life / 100 : 0) : this.size;
 
     // Do not draw hidden particles (flashing problems)
-    if(this.alpha) {
+    if(this.alpha || (this.life && options.decrease)) { // If decrease mode and no life, stop drawing particles
       // TODO : make color hex to rgba dynamic
       // this.color = '#69a34f';
       // this.color = "rgba(105, 163, 79, "+ this.alpha + ")";
@@ -163,12 +163,12 @@
       //var color = Utils.hexToRgb(this.color);
 
 
-
+      var color = Utils.hexToRgb(this.color);
       //this.color = (color != null) ? "rgba(" + color.r + ", " + color.g + ", " + color.b + ", "+ this.alpha + ")" : this.color;
       this.context.beginPath();
 
       // TODO : handle arrays of colors with dynamic choosing :)
-      this.context.fillStyle = this.color;
+      this.context.fillStyle = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", "+ this.alpha + ")";//this.color;
 
       if(this.circle) {
         this.context.arc(this.x, this.y, size, 0, 2 * Math.PI);  
@@ -181,16 +181,30 @@
     } 
   };
 
+  Particle.prototype.move = function () {    
+    this.x += this.dx;
+    this.y += this.dy; 
+
+    // TODO : implement wind correctly wind
+    // p.dx += p.gx - 0.06; // with wind
+    this.dx += this.gx; // gravity 
+    this.dy += this.gy;
+
+
+    this.dx *= this.frictX; // friction
+    this.dy *= this.frictY;   
+  };
+
 
   Zephos.spawn = function (number, x, y) {
     for(var i = 0; i < number; i++) {
-      var p = new Particle(x + Utils.randFloat(7) * Utils.sign(), y + Utils.randFloat(7) * Utils.sign(), 0, Zephos.context);
+      var rand = Utils.randFloat(7) * Utils.sign();
+      var p = new Particle(x + rand, y + rand, 0, Zephos.context);
 
       
-      p.gy = -0.03 - Zephos.Utils.randFloat(0.02);
-      p.frictY = 1.0001;
+      p.gy = -0.13 - Zephos.Utils.randFloat(0.02);
+      p.frictY = 1.001;
       p.life = Zephos.Utils.randInt(30);
-      p.dy = Math.abs(p.dy);
 
 
       this.particles.push(p);
@@ -205,47 +219,30 @@
 
   Zephos.particlesDraw = function () {
     this.context.clearRect(0, 0, canvas.width, canvas.height);
-
-    this.particlesUpdate();
-
-    for (var i = this.particles.length - 1; i >= 0; i--) {
-      var p = this.particles[i];
-      // TODO : make this param on init Zephos
-      p.draw({decrease: true});
-    };
-  };
-
-  Zephos.particlesUpdate = function () {
-
-    var i = 0;
-    var all = this.particles;
-    
-    for (var i = all.length - 1; i >= 0; i--) {
-
-      // Get the particle from the list
-      var p = all[i];
-
-      p.x += p.dx; // movement
-      p.y += p.dy;
-
-      // TODO : implement wind correctly wind
-      // p.dx += p.gx - 0.06; // with wind
-
-
-      p.dx += p.gx; // gravity 
-      p.dy += p.gy;
-
-
-      p.dx *= p.frictX; // friction
-      p.dy *= p.frictY;
-      
-      if(p.life-- < 0) {
-        p.alpha -= 0.05;
+    this.particles.forEach(function(particle, i) {
+      particle.move();
+      particle.draw({decrease: true});
+      if(particle.life-- < 0) {
+        particle.alpha -= 0.05;
       }
-      if(p.alpha <= 0) {
+      particle.alpha <= 0 && this.particles.splice(i,1);
+    }, this);
+
+    /*var all = this.particles;
+    
+    for (var i = 0; i < all.length; i++) {
+      var particle = all[i];
+      particle.move();      
+      particle.draw({decrease: true});
+
+      if(particle.life-- < 0) {
+        particle.alpha -= 0.05;
+      }
+
+      if(particle.alpha <= 0) {
         all.splice(i,1);
       }
-    }
+    }*/
   };
 
   return Zephos;
